@@ -1,7 +1,10 @@
 'use client';
 
 import * as Yup from 'yup';
+import toast from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import Link from '@mui/material/Link';
@@ -19,9 +22,11 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { RouterLink } from 'src/routes/components';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
+
 // ----------------------------------------------------------------------
 
 export default function LoginBackgroundView() {
+  const router = useRouter()
   const passwordShow = useBoolean();
 
   const LoginSchema = Yup.object().shape({
@@ -49,7 +54,13 @@ export default function LoginBackgroundView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await signIn('sanity-login', {
+        redirect: false,
+        email : "email",
+        password : "password"
+      });
+      toast.success('Successfully signed In')
+      router.push('/')
       reset();
       console.log('DATA', data);
     } catch (error) {

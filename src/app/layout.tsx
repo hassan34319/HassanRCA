@@ -7,13 +7,13 @@ import { primaryFont } from 'src/theme/typography';
 import { LocalizationProvider } from 'src/locales';
 import ProgressBar from 'src/components/progress-bar';
 import MotionLazy from 'src/components/animate/motion-lazy';
+import { NextAuthProvider } from 'src/components/AuthProvider/provider';
 
 // ----------------------------------------------------------------------
 
 export const metadata = {
   title: 'RCA Capital',
-  description:
-    'Descripción de RCA Capital pendiente',
+  description: 'Descripción de RCA Capital pendiente',
   keywords: 'trading,learning,academy,profit,exchange,admin,capital,invest',
   themeColor: '#000000',
   manifest: '/manifest.json',
@@ -55,14 +55,16 @@ export default function RootLayout({ children }: Props) {
   return (
     <html lang="en" className={primaryFont.className}>
       <body>
-        <LocalizationProvider>
-          <ThemeProvider>
-            <MotionLazy>
-              <ProgressBar />
-              {children}
-            </MotionLazy>
-          </ThemeProvider>
-        </LocalizationProvider>
+        <NextAuthProvider>
+          <LocalizationProvider>
+            <ThemeProvider>
+              <MotionLazy>
+                <ProgressBar />
+                {children}
+              </MotionLazy>
+            </ThemeProvider>
+          </LocalizationProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

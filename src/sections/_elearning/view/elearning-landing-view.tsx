@@ -1,5 +1,7 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
+
 import {
   _members,
   _courses,
@@ -14,9 +16,14 @@ import ElearningLandingHero from '../landing/elearning-landing-hero';
 import ElearningLatestPosts from '../../blog/elearning/elearning-latest-posts';
 import ElearningLandingFeaturedCourses from '../landing/elearning-landing-featured-courses';
 
+
 // ----------------------------------------------------------------------
 
 export default function ElearningLandingView() {
+  const { data: session, status } = useSession()
+  if (status === "authenticated") {
+    return <p>Signed in as {session?.user?.email}</p>
+  }
   return (
     <>
       <ElearningLandingHero />

@@ -1,7 +1,13 @@
 'use client';
 
+/* eslint-disable import/no-extraneous-dependencies */
+
 import * as Yup from 'yup';
+import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
+import { signUp } from 'next-auth-sanity/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import Link from '@mui/material/Link';
@@ -35,7 +41,7 @@ export default function RegisterBackgroundView() {
       .min(6, 'La contraseña debe tener 6 caracteres de largo'),
     confirmPassword: Yup.string()
       .required('Se requiere confirmar contraseña')
-      .oneOf([Yup.ref('password')], "Contraseñas no coinciden"),
+      .oneOf([Yup.ref('password')], 'Contraseñas no coinciden'),
   });
 
   const defaultValues = {
@@ -56,11 +62,28 @@ export default function RegisterBackgroundView() {
     formState: { isSubmitting },
   } = methods;
 
+  const router = useRouter();
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!data.email) {
+        // Display an error message or handle the case where email is not filled
+        return;
+      }
+      console.log('DATA', data.email);
+      await signUp({
+        email : data.email,
+        password : data.password,
+        name : data.fullName
+      });
+  
+      await signIn('sanity-login', {
+        redirect: false,
+        email : "email",
+        password : "password"
+      });
+      toast.success('Successfully registered');
+      router.push('/auth/iniciar-sesion');
       reset();
-      console.log('DATA', data);
     } catch (error) {
       console.error(error);
     }
@@ -166,6 +189,7 @@ export default function RegisterBackgroundView() {
 
   return (
     <>
+      <Toaster />
       {renderHead}
 
       {renderForm}
